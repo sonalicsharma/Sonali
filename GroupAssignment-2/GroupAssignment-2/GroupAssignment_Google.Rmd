@@ -1,0 +1,294 @@
+Stock Prediction of Google Using Twitter Sentiment Analysis
+========================================================
+Sonali Changkakoti
+Illinois State University
+IT 497, Group Assignment # 2
+
+A sentiment analysis was conducted using the tweets of people from Twitter about Google. Total number of twwets each day were 200.
+
+The sentiment histograms for each day are given below:
+
+```{r chunk1,message=FALSE,warning=FALSE,echo=FALSE}
+
+library(bitops)
+library(ROAuth)
+library(RCurl)
+library(rjson)
+library(RColorBrewer)
+library(NLP)
+library(devtools)
+library(tm)
+library(twitteR)
+library(wordcloud)
+library(ggplot2)
+library(httr)
+
+## Loading the authentication data
+load("twitter_authentication.Rdata")
+check<-registerTwitterOAuth(cred)
+
+## Tweets for first day
+tweetsDay1<-searchTwitter("@Google",n=200, lang="en", since='2014-12-01', until='2014-12-02')
+
+
+## Fields which are needed are extracted
+
+tweetsDay1.id <- sapply(tweetsDay1, function(x) x$getId())
+tweetsDay1.text <- sapply(tweetsDay1, function(x) x$getText())
+tweetsDay1.screenname <- sapply(tweetsDay1, function(x) x$getScreenName())
+tweetsDay1.isretweet <- sapply(tweetsDay1, function(x) x$getIsRetweet())
+tweetsDay1.retweeted <- sapply(tweetsDay1, function(x) x$getRetweeted())
+tweetsDay1.created <- sapply(tweetsDay1, function(x) x$getCreated())
+
+
+## Writing the data to a file
+
+df <- data.frame(tweetsDay1.id, tweetsDay1.text, tweetsDay1.screenname, tweetsDay1.isretweet, tweetsDay1.retweeted, tweetsDay1.created)
+names(df) <-c("id", "text", "screenname", "isretweet", "retweeted", "created")
+write.table(df, file = "Google_day1.txt", append = TRUE)
+
+## Tweets for second day
+
+tweetsDay2<-searchTwitter("@Google",n=200, lang="en", since='2014-12-02', until='2014-12-03')
+
+## Fields which are needed are extracted
+
+tweetsDay2.id <- sapply(tweetsDay2, function(x) x$getId())
+tweetsDay2.text <- sapply(tweetsDay2, function(x) x$getText())
+tweetsDay2.screenname <- sapply(tweetsDay2, function(x) x$getScreenName())
+tweetsDay2.isretweet <- sapply(tweetsDay2, function(x) x$getIsRetweet())
+tweetsDay2.retweeted <- sapply(tweetsDay2, function(x) x$getRetweeted())
+tweetsDay2.created <- sapply(tweetsDay2, function(x) x$getCreated())
+
+## Writing the data to a file
+
+df <- data.frame(tweetsDay2.id, tweetsDay2.text, tweetsDay2.screenname, tweetsDay2.isretweet, tweetsDay2.retweeted, tweetsDay2.created)
+names(df) <-c("id", "text", "screenname", "isretweet", "retweeted", "created")
+write.table(df, file = "Google_day2.txt", append = TRUE)
+
+## Tweets for third day
+
+tweetsDay3<-searchTwitter("@Google",n=200, lang="en", since='2014-12-03', until='2014-12-04')
+
+
+## Fields which are needed are extracted
+
+tweetsDay3.id <- sapply(tweetsDay3, function(x) x$getId())
+tweetsDay3.text <- sapply(tweetsDay3, function(x) x$getText())
+tweetsDay3.screenname <- sapply(tweetsDay3, function(x) x$getScreenName())
+tweetsDay3.isretweet <- sapply(tweetsDay3, function(x) x$getIsRetweet())
+tweetsDay3.retweeted <- sapply(tweetsDay3, function(x) x$getRetweeted())
+tweetsDay3.created <- sapply(tweetsDay3, function(x) x$getCreated())
+
+
+## Writing the data to a file
+
+df <- data.frame(tweetsDay3.id, tweetsDay3.text, tweetsDay3.screenname, tweetsDay3.isretweet, tweetsDay3.retweeted, tweetsDay3.created)
+names(df) <-c("id", "text", "screenname", "isretweet", "retweeted", "created")
+write.table(df, file = "Google_day3.txt", append = TRUE)
+
+## Tweets for fourth day
+
+tweetsDay4<-searchTwitter("@Google",n=200, lang="en", since='2014-12-04', until='2014-12-05')
+
+
+## Fields which are needed are extracted
+
+tweetsDay4.id <- sapply(tweetsDay4, function(x) x$getId())
+tweetsDay4.text <- sapply(tweetsDay4, function(x) x$getText())
+tweetsDay4.screenname <- sapply(tweetsDay4, function(x) x$getScreenName())
+tweetsDay4.isretweet <- sapply(tweetsDay4, function(x) x$getIsRetweet())
+tweetsDay4.retweeted <- sapply(tweetsDay4, function(x) x$getRetweeted())
+tweetsDay4.created <- sapply(tweetsDay4, function(x) x$getCreated())
+
+
+## Writing the data to a file
+
+df <- data.frame(tweetsDay4.id,tweetsDay4.text, tweetsDay4.screenname, tweetsDay4.isretweet, tweetsDay4.retweeted, tweetsDay4.created)
+names(df) <-c("id", "text", "screenname", "isretweet", "retweeted", "created")
+write.table(df, file = "Google_day4.txt", append = TRUE)
+
+## Tweets for fifth day
+
+tweetsDay5<-searchTwitter("@Google",n=200, lang="en", since='2014-12-05', until='2014-12-06')
+
+## Fields which are needed are extracted
+
+tweetsDay5.id <- sapply(tweetsDay5, function(x) x$getId())
+tweetsDay5.text <- sapply(tweetsDay5, function(x) x$getText())
+tweetsDay5.screenname <- sapply(tweetsDay5, function(x) x$getScreenName())
+tweetsDay5.isretweet <- sapply(tweetsDay5, function(x) x$getIsRetweet())
+tweetsDay5.retweeted <- sapply(tweetsDay5, function(x) x$getRetweeted())
+tweetsDay5.created <- sapply(tweetsDay5, function(x) x$getCreated())
+
+
+## Writing the data to a file
+
+df <- data.frame(tweetsDay5.id, tweetsDay5.text, tweetsDay5.screenname, tweetsDay5.isretweet, tweetsDay5.retweeted, tweetsDay5.created)
+names(df) <-c("id", "text", "screenname", "isretweet", "retweeted", "created")
+write.table(df, file = "Google_day5.txt", append = TRUE)
+
+
+## Loading opinion lexicon
+pos <- scan("positive-words.txt",what="character",comment.char=";")
+neg <- scan("negative-words.txt",what="character",comment.char=";")
+
+## Creating corpus
+## these functions are from the tm package
+tweetsDay1.corpus <- Corpus(VectorSource(tweetsDay1.text))
+tweetsDay2.corpus <- Corpus(VectorSource(tweetsDay2.text))
+tweetsDay3.corpus <- Corpus(VectorSource(tweetsDay3.text))
+tweetsDay4.corpus <- Corpus(VectorSource(tweetsDay4.text))
+tweetsDay5.corpus <- Corpus(VectorSource(tweetsDay5.text))
+
+## Cleaning up tweets for first day
+tweetsDay1.corpus <- tm_map(tweetsDay1.corpus, tolower) 
+tweetsDay1.corpus <- tm_map(tweetsDay1.corpus, removePunctuation)
+tweetsDay1.corpus <- tm_map(tweetsDay1.corpus, function(x) removeWords(x,stopwords()))
+
+## Cleaning up tweets for second day
+tweetsDay2.corpus <- tm_map(tweetsDay2.corpus, tolower) 
+tweetsDay2.corpus <- tm_map(tweetsDay2.corpus, removePunctuation)
+tweetsDay2.corpus <- tm_map(tweetsDay2.corpus, function(x) removeWords(x,stopwords()))
+
+## Cleaning up tweets for third day
+tweetsDay3.corpus <- tm_map(tweetsDay3.corpus, tolower) 
+tweetsDay3.corpus <- tm_map(tweetsDay3.corpus, removePunctuation)
+tweetsDay3.corpus <- tm_map(tweetsDay3.corpus, function(x) removeWords(x,stopwords()))
+
+## Cleaning up tweets for fourth day
+tweetsDay4.corpus <- tm_map(tweetsDay4.corpus, tolower) 
+tweetsDay4.corpus <- tm_map(tweetsDay4.corpus, removePunctuation)
+tweetsDay4.corpus <- tm_map(tweetsDay4.corpus, function(x) removeWords(x,stopwords()))
+
+## Cleaning up tweets for fifth day
+tweetsDay5.corpus <- tm_map(tweetsDay5.corpus, tolower) 
+tweetsDay5.corpus <- tm_map(tweetsDay5.corpus, removePunctuation)
+tweetsDay5.corpus <- tm_map(tweetsDay5.corpus, function(x) removeWords(x,stopwords()))
+
+
+## Spliting the tweets in the corpus up into individual words where
+## lapply iterates over each element in the corpus
+## and applieing the strsplit function
+## the splitting argument is the 3rd in the lapply function
+## and is splitting on white space.
+corpus.splitDay1 <- lapply(tweetsDay1.corpus,strsplit,"\\s+")
+corpus.splitDay2 <- lapply(tweetsDay2.corpus,strsplit,"\\s+")
+corpus.splitDay3 <- lapply(tweetsDay3.corpus,strsplit,"\\s+")
+corpus.splitDay4 <- lapply(tweetsDay4.corpus,strsplit,"\\s+")
+corpus.splitDay5 <- lapply(tweetsDay5.corpus,strsplit,"\\s+")
+
+## Finding matches for the individual words in the two lexicons
+## lapply again, x takes on an element in the corpus
+## at each iteration
+matchesDay1 <- lapply(corpus.splitDay1,function(x) {
+  match.pos <- match(x[[1]],pos)
+  match.neg <- match(x[[1]],neg) 
+  
+## Returning the length of each match vector, non-na 
+list(length(which(!is.na(match.pos))),length(which(!is.na(match.neg))))
+})
+
+matchesDay2 <- lapply(corpus.splitDay2,function(x) {
+  match.pos <- match(x[[1]],pos)
+  match.neg <- match(x[[1]],neg) 
+  
+  ## Returning the length of each match vector, non-na 
+  list(length(which(!is.na(match.pos))),length(which(!is.na(match.neg))))
+})
+
+matchesDay3 <- lapply(corpus.splitDay3,function(x) {
+  match.pos <- match(x[[1]],pos)
+  match.neg <- match(x[[1]],neg) 
+  
+  list(length(which(!is.na(match.pos))),length(which(!is.na(match.neg))))
+})
+
+matchesDay4 <- lapply(corpus.splitDay4,function(x) {
+  match.pos <- match(x[[1]],pos)
+  match.neg <- match(x[[1]],neg) 
+  
+  list(length(which(!is.na(match.pos))),length(which(!is.na(match.neg))))
+})
+
+matchesDay5 <- lapply(corpus.splitDay5,function(x) {
+  match.pos <- match(x[[1]],pos)
+  match.neg <- match(x[[1]],neg) 
+  
+  list(length(which(!is.na(match.pos))),length(which(!is.na(match.neg))))
+})
+
+## Converting the matches into a matrix
+## one column for positive, one for negative
+match.matrixDay1 <-matrix(unlist(matchesDay1),nrow=length(matchesDay1),ncol=2,byrow=T)
+match.matrixDay2 <-matrix(unlist(matchesDay2),nrow=length(matchesDay2),ncol=2,byrow=T)
+match.matrixDay3 <-matrix(unlist(matchesDay3),nrow=length(matchesDay3),ncol=2,byrow=T)
+match.matrixDay4 <-matrix(unlist(matchesDay4),nrow=length(matchesDay4),ncol=2,byrow=T)
+match.matrixDay5 <-matrix(unlist(matchesDay5),nrow=length(matchesDay5),ncol=2,byrow=T)
+
+
+## Calculate a simple sentiment score by substracting
+## positive count from negative count
+simple.sentiment_day1 <- match.matrixDay1[,1] - match.matrixDay1[,2]
+simple.sentiment_day2 <- match.matrixDay2[,1] - match.matrixDay2[,2]
+simple.sentiment_day3 <- match.matrixDay3[,1] - match.matrixDay3[,2]
+simple.sentiment_day4 <- match.matrixDay4[,1] - match.matrixDay4[,2]
+simple.sentiment_day5 <- match.matrixDay5[,1] - match.matrixDay5[,2]
+
+
+## Histogram of sentiment
+hist(simple.sentiment_day1)
+hist(simple.sentiment_day2)
+hist(simple.sentiment_day3)
+hist(simple.sentiment_day4)
+hist(simple.sentiment_day5)
+
+sum1<-(sum(simple.sentiment_day1))/100
+sum2<-(sum(simple.sentiment_day2))/100
+sum3<-(sum(simple.sentiment_day3))/100
+sum4<-(sum(simple.sentiment_day4))/100
+sum5<-(sum(simple.sentiment_day5))/100
+
+
+# Stock prices  change for five days from December 1, 2014 to December 5, 2014
+
+stock<-c(-5.1, 0.24, -0.12, 6.15, -5.74)
+
+sentiments<-c(sum1, sum2, sum3, sum4, sum5)
+## Days
+days<-c('day1','day2', 'day3', 'day4', 'day5')
+
+## Converting the vectors into a dataframe
+library(ggplot2)
+library(reshape2)
+df <- data.frame(days,stock,sentiments)
+molten_df<-melt(df,id.vars="days")
+```
+
+A graph comparing the changes in stock prices for the 5 days to the actual stock price changes is given below:
+
+
+```{r chunk2,echo=FALSE}
+
+## Plotting a graph with the data
+
+ggplot(molten_df, aes(x=days, y= value, fill=variable))+ 
+  geom_bar(stat="identity", position=position_dodge())+
+  labs(title = "Overall Stock Value and Sentiment Comparison")+ theme_bw()
+```
+
+
+Twitter data were used to study the sentiments of the people. It was observed that the emotions and moods of individuals affect their decision making process, thus, leading to a direct correlation between public sentiment and market sentiment.  Sentiments were calculated from 200 tweets of Google for each day from December 1, 2014 to December 5, 2014. When the sentiments were positive and higher, the stock price were increasing and when the sentiments were negative or lower positive, the stock price were declining.
+Out of 5 days, there was an exception for the correlation between the sentiment and stock price on the last day. Here, the sentiment was positive and higher but the stock price had decreased. It might be 
+
+
+
+
+
+
+
+
+
+ 
+
+
